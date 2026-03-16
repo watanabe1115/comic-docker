@@ -15,7 +15,7 @@ services:
     image: nginx:alpine
     container_name: stpageflip
     volumes:
-      - ./stpageflip:/usr/share/nginx/html:ro
+      - ./stpageflip:/usr/share/nginx/html
       - /mnt/P_KNOWLEDGE/Comic/同人:/usr/share/nginx/html/comic/maniax:ro
       - /mnt/P_KNOWLEDGE/Comic/商業:/usr/share/nginx/html/comic/pro:ro
     restart: unless-stopped
