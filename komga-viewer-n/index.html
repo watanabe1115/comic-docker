@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StPageFlip Viewer</title>
+  <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
+  <style>
+    body { margin:0; background:#000; color:#fff; font-family:sans-serif; overflow:hidden; }
+    #book { width:100vw; height:100vh; }
+    .controls { position:fixed; top:10px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.7); padding:10px 20px; border-radius:8px; z-index:999; display:flex; gap:15px; }
+    button { padding:8px 16px; background:#444; border:none; color:white; border-radius:6px; cursor:pointer; }
+    button:hover { background:#666; }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <button onclick="prev()">← 前</button>
+    <button onclick="next()">次 →</button>
+    <button onclick="toggleFull()">フルスクリーン</button>
+    <button onclick="history.back()">戻る</button>
+  </div>
+  <div id="book"></div>
+
+  <script>
+    let pageFlip;
+
+    async function loadBook(bookId) {
+      try {
+        const res = await fetch(`/api/v1/books/${bookId}/pages`);
+        if (!res.ok) throw new Error("ページ取得失敗");
+        const pages = await res.json();
+        const urls = pages.map(p => `/api/v1/books/${bookId}/pages/${p.number}/raw`);
+
+        pageFlip = new St.PageFlip(document.getElementById('book'), {
+          width: 850,
+          height: 1200,
+          flippingTime: 1000,
+          usePortrait: true,
+          showCover: true,
+          rtl: true,  // 漫画向き（左から右に変更したい場合は false）
+          drawShadow: true,
+          mobile: true
+        });
+
+        pageFlip.loadImages(urls);
+      } catch (e) {
+        document.getElementById('book').innerHTML = `<h2 style="text-align:center; padding:30vh 0;">エラー: ${e.message}<br>bookIdを確認してください</h2>`;
+      }
+    }
+
+    function prev() { pageFlip?.flipPrev(); }
+    function next() { pageFlip?.flipNext(); }
+    function toggleFull() {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+
+    const params = new URLSearchParams(location.search);
+    const bookId = params.get('bookId');
+    if (bookId) loadBook(bookId);
+    else document.getElementById('book').innerHTML = '<h2 style="text-align:center; padding:30vh 0;">?bookId=xxx を付けてアクセスしてください</h2>';
+  </script>
+</body>
+</html>

@@ -1,31 +1,29 @@
 services:
-  kavita:
-    image: lscr.io/linuxserver/kavita:latest
-    container_name: kavita
-    volumes:
-      - /mnt/P_KNOWLEDGE/Comic/同人:/comic/maniax:ro
-      - /mnt/P_KNOWLEDGE/Comic/商業:/comic/pro:ro
-      - ./kavita_mnt:/config
+  komga-n:
+    image: gotson/komga:latest
+    container_name: komga-n
     restart: unless-stopped
+    volumes:
+      - ./komga-n_mnt/config:/config
+      - /mnt/P_KNOWLEDGE/Comic/同人:/data/maniax:ro
+      - /mnt/P_KNOWLEDGE/Comic/商業:/data/pro:ro
+    environment:
+      - TZ=Asia/Tokyo
     networks:
       - public_network
-      - monitoring_network
 
-  stpageflip:
+  komga-viewer-n:
     image: nginx:alpine
-    container_name: stpageflip
-    volumes:
-      - ./stpageflip:/usr/share/nginx/html
-      - /mnt/P_KNOWLEDGE/Comic/同人:/usr/share/nginx/html/comic/maniax:ro
-      - /mnt/P_KNOWLEDGE/Comic/商業:/usr/share/nginx/html/comic/pro:ro
+    container_name: komga-viewer-n
     restart: unless-stopped
+    volumes:
+      - ./komga-viewer-n:/usr/share/nginx/html:ro
+      - ./nginx-viewer-n.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
       - public_network
-      - monitoring_network
+    depends_on:
+      - komga-n
 
 networks:
   public_network:
-    external: true
-
-  monitoring_network:
     external: true
