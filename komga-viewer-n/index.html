@@ -39,7 +39,7 @@
 
       // URLを0ベース + zero_based=true で生成
       const urls = pages.map(p => 
-        `/api/v1/books/${bookId}/pages/${p.number - 1}/raw?zero_based=true`
+        `/api/v1/books/${bookId}/pages/${p.number - 1}?zero_based=true`
       );
 
       console.log('生成した画像URL例:', urls.slice(0, 3));  // デバッグ用（最初の3つだけ出力）
