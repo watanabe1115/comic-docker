@@ -22,44 +22,55 @@
   </div>
   <div id="book"></div>
 
-  <script>
-    let pageFlip;
+<script>
+  let pageFlip;
 
-    async function loadBook(bookId) {
-      try {
-        const res = await fetch(`/api/v1/books/${bookId}/pages`);
-        if (!res.ok) throw new Error("ページ取得失敗");
-        const pages = await res.json();
-        const urls = pages.map(p => `/api/v1/books/${bookId}/pages/${p.number}/raw`);
-
-        pageFlip = new St.PageFlip(document.getElementById('book'), {
-          width: 850,
-          height: 1200,
-          flippingTime: 1000,
-          usePortrait: true,
-          showCover: true,
-          rtl: true,  // 漫画向き（左から右に変更したい場合は false）
-          drawShadow: true,
-          mobile: true
-        });
-
-        pageFlip.loadImages(urls);
-      } catch (e) {
-        document.getElementById('book').innerHTML = `<h2 style="text-align:center; padding:30vh 0;">エラー: ${e.message}<br>bookIdを確認してください</h2>`;
+  async function loadBook(bookId) {
+    try {
+      const res = await fetch(`/api/v1/books/${bookId}/pages`, {
+        credentials: 'include'  // セッション/認証引き継ぎ
+      });
+      if (!res.ok) {
+        throw new Error(`ページ一覧取得失敗: ${res.status} - ${await res.text()}`);
       }
-    }
+      const pages = await res.json();
 
-    function prev() { pageFlip?.flipPrev(); }
-    function next() { pageFlip?.flipNext(); }
-    function toggleFull() {
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-      else document.exitFullscreen();
-    }
+      if (pages.length === 0) throw new Error('この本にページがありません');
 
-    const params = new URLSearchParams(location.search);
-    const bookId = params.get('bookId');
-    if (bookId) loadBook(bookId);
-    else document.getElementById('book').innerHTML = '<h2 style="text-align:center; padding:30vh 0;">?bookId=xxx を付けてアクセスしてください</h2>';
-  </script>
+      // URLを0ベース + zero_based=true で生成
+      const urls = pages.map(p => 
+        `/api/v1/books/${bookId}/pages/${p.number - 1}/raw?zero_based=true`
+      );
+
+      console.log('生成した画像URL例:', urls.slice(0, 3));  // デバッグ用（最初の3つだけ出力）
+
+      pageFlip = new St.PageFlip(document.getElementById('book'), {
+        width: 850,
+        height: 1200,
+        flippingTime: 1000,
+        usePortrait: true,
+        showCover: true,
+        rtl: true,
+        drawShadow: true,
+        mobile: true
+      });
+
+      pageFlip.loadFromImages(urls);
+
+    } catch (e) {
+      console.error(e);
+      document.getElementById('book').innerHTML = `
+        <h2 style="text-align:center; padding:30vh 0; color:red;">
+          エラー: ${e.message}<br>
+          bookIdやAPIを確認してください（DevToolsのNetworkタブも見てね）
+        </h2>`;
+    }
+  }
+
+  const params = new URLSearchParams(location.search);
+  const bookId = params.get('bookId');
+  if (bookId) loadBook(bookId);
+  else document.getElementById('book').innerHTML = '<h2 style="text-align:center; padding:30vh 0;">?bookId=xxx を付けてアクセスしてください</h2>';
+</script>
 </body>
 </html>
