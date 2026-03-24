@@ -1,0 +1,18 @@
+services:
+  komga-n:
+    image: gotson/komga:latest
+    container_name: komga-n
+    restart: unless-stopped
+    volumes:
+      - ./komga-a_mnt/config:/config
+      - /mnt/P_KNOWLEDGE/AdultComic/同人:/data/maniax:ro
+      - /mnt/P_KNOWLEDGE/AdultComic/商業:/data/pro:ro
+      - /mnt/P_KNOWLEDGE/AdultComic/CG:/data/cg:ro
+    environment:
+      - TZ=Asia/Tokyo
+    networks:
+      - private_network
+
+networks:
+  private_network:
+    external: true

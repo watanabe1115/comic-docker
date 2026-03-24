@@ -1,0 +1,9 @@
+services:
+  komga-viewer-build:
+    image: node:20
+    container_name: komga-viewer-build
+    working_dir: /app
+    volumes:
+      - ./komga-viewer:/app
+    command: ["npm", "run", "build"]
+    restart: "no"
