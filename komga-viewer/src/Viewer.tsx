@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { fetchPages } from "./api";
+
+import { fetchPages }   from "@/api";
+import { PageFlipBook } from "@/components/PageFlipBook";
 
 /**
  * URL パスから bookId を抽出する。

@@ -1,4 +1,4 @@
-import Viewer from "./Viewer";
+import Viewer from "@/Viewer";
 
 function App() {
   return <Viewer />;
