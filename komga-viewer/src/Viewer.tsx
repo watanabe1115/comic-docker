@@ -4,6 +4,7 @@ import { getBookId }     from "@/utils/url";
 import { buildPageList } from "@/utils/pages";
 import { fetchPages }    from "@/api";
 import { PageFlipBook }  from "@/components/PageFlipBook";
+import { ClickLayer }    from "@/components/viewer/ClickLayer";
 
 export default function Viewer() {
     const bookId = getBookId(location.pathname);
@@ -23,5 +24,10 @@ export default function Viewer() {
         load();
     }, [bookId]);
 
-    return <PageFlipBook pages={pages} />;
+    return (
+      <div style={{ position: "fixed", inset: 0 }}>
+        <PageFlipBook pages={pages} />
+        <ClickLayer onCenterClick={() => console.log("UI メニュー表示")} />
+      </div>
+    );
 }

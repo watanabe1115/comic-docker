@@ -1,0 +1,9 @@
+.layer {
+  position: absolute;
+  left: 30%;
+  top: 0;
+  width: 40%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 10;
+}
