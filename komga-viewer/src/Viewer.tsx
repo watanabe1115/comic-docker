@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import { getBookId }     from "@/utils/url";
-import { buildPageList } from "@/utils/pages";
+import { buildPageList, convertToDisplayPage, convertToOriginalPage } from "@/utils/pages";
 import { fetchPages }    from "@/api";
 import { PageFlipBook }  from "@/components/PageFlipBook";
 import { ClickLayer }    from "@/components/viewer/ClickLayer";
+import { OverlayMenu }   from "@/components/viewer/OverlayMenu";
 
 export default function Viewer() {
     const bookId = getBookId(location.pathname);
@@ -13,21 +14,52 @@ export default function Viewer() {
     }
     const safeBookId: string = bookId;
 
+    const flipRef = useRef<any>(null);
+
     const [pages, setPages] = useState<string[]>([]);
+    const [menuVisible, setMenuVisible] = useState(false);
+
+    // スライダーと同期するための現在ページ
+    const [currentPage, setCurrentPage] = useState(0);
 
     useEffect(() => {
         async function load() {
             const json = await fetchPages(safeBookId);
             setPages(buildPageList(safeBookId, json));
         }
-
         load();
-    }, [bookId]);
+    }, [safeBookId]);
+
+    // pages がセットされた後に PageFlipBook の初期ページを同期
+    useEffect(() => {
+      if (!flipRef.current) return;
+
+      const inst = flipRef.current.pageFlip?.();
+      if (!inst) return;
+
+      setCurrentPage(inst.getCurrentPageIndex());
+    }, [pages]);
+
+    const total = pages.length - 2;
+    const displayPage = convertToDisplayPage(currentPage, total);
 
     return (
       <div style={{ position: "fixed", inset: 0 }}>
-        <PageFlipBook pages={pages} />
-        <ClickLayer onCenterClick={() => console.log("UI メニュー表示")} />
+        <PageFlipBook
+          ref={flipRef}
+          pages={pages}
+          onFlip={(page) => setCurrentPage(page)}
+        />
+        <ClickLayer onCenterClick={() => setMenuVisible(v => !v)} />
+        <OverlayMenu
+          visible={menuVisible}
+          current={displayPage}
+          total={total}
+          onChangePage={(page) => {
+            const originalPage = convertToOriginalPage(page, total);
+            flipRef.current?.pageFlip()?.turnToPage(originalPage)
+          }}
+        />
       </div>
     );
 }
