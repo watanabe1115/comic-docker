@@ -1,0 +1,1 @@
+export { fetchPages } from "./komga";

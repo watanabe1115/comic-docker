@@ -1,9 +1,25 @@
 import HTMLFlipBook from "react-pageflip";
 import { useEffect, useState } from "react";
+import { fetchPages } from "./api";
+
+/**
+ * URL パスから bookId を抽出する。
+ * 例: "/book/ABC123/read" → "ABC123"
+ *
+ * @param path URL のパス部分（location.pathname）
+ * @returns bookId（見つからない場合は undefined）
+ */
+function getBookId(path: string): string | undefined  {
+  const match = path.match(/^\/book\/([^/]+)\/read/);
+  return match?.[1];
+}
 
 export default function Viewer() {
-    const match = location.pathname.match(/^\/book\/([^/]+)\/read/);
-    const bookId = match?.[1];
+    const bookId = getBookId(location.pathname);
+    if (!bookId) {
+        return <h2>読み込み失敗</h2>;
+    }
+    const safeBookId: string = bookId;
 
     const [pages, setPages] = useState<string[]>([]);
 
@@ -11,11 +27,7 @@ export default function Viewer() {
     
     useEffect(() => {
         async function load() {
-            const res = await fetch(`/api/v1/books/${bookId}/pages`, {
-                credentials: "include"
-            });
-            const json = await res.json();
-
+            const json = await fetchPages(safeBookId);
             const urls = json.map((p: any) =>
                 `/api/v1/books/${bookId}/pages/${p.number - 1}?zero_based=true`
             );
@@ -28,12 +40,8 @@ export default function Viewer() {
             setPages(urls);
         }
 
-        if (bookId) load();
+        load();
     }, [bookId]);
-
-    if (!bookId) {
-        return <h2>読み込み失敗</h2>;
-    }
 
     return (
 <div
@@ -84,6 +92,7 @@ export default function Viewer() {
     ))}
   </HTMLFlipBook>
 </div>
+
 
     );
 }
