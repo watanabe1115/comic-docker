@@ -1,4 +1,3 @@
-import HTMLFlipBook from "react-pageflip";
 import { useEffect, useState } from "react";
 import { fetchPages } from "./api";
 
@@ -43,56 +42,5 @@ export default function Viewer() {
         load();
     }, [bookId]);
 
-    return (
-<div
-  style={{
-    position: "fixed",
-    inset: 0,
-    background: "#000",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden"
-  }}
->
-  <HTMLFlipBook
-    width={850}
-    height={1200}
-    size="stretch"
-    minWidth={300}
-    maxWidth={2000}
-    minHeight={400}
-    maxHeight={3000}
-    drawShadow={true}
-    maxShadowOpacity={0.4}
-    flippingTime={800}
-    usePortrait={true}
-    showCover={false}
-    mobileScrollSupport={true}
-    // direction="rtl"
-    startPage={pages.length - 1}
-    style={{
-      width: "100%",
-      height: "100%",        // ← これが重要！
-      objectFit: "contain",   // ← FlipBook 全体を縮小して収める
-      backgroundColor: "#000"
-    }}
-  >
-    {pages.map((url, i) => (
-      <img
-        key={i}
-        src={url}
-        alt={`page-${i}`}
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover"
-        }}
-      />
-    ))}
-  </HTMLFlipBook>
-</div>
-
-
-    );
+    return <PageFlipBook pages={pages} />;
 }
