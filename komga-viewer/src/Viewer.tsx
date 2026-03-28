@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { getBookId }    from "@/utils/url";
-import { fetchPages }   from "@/api";
-import { PageFlipBook } from "@/components/PageFlipBook";
+import { getBookId }     from "@/utils/url";
+import { buildPageList } from "@/utils/pages";
+import { fetchPages }    from "@/api";
+import { PageFlipBook }  from "@/components/PageFlipBook";
 
 export default function Viewer() {
     const bookId = getBookId(location.pathname);
@@ -13,21 +14,10 @@ export default function Viewer() {
 
     const [pages, setPages] = useState<string[]>([]);
 
-    const BLACK_IMAGE = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8AARwMBgQAAAABJRU5ErkJggg==";
-    
     useEffect(() => {
         async function load() {
             const json = await fetchPages(safeBookId);
-            const urls = json.map((p: any) =>
-                `/api/v1/books/${bookId}/pages/${p.number - 1}?zero_based=true`
-            );
-            // 先頭と末尾に黒画像を追加
-            urls.unshift(BLACK_IMAGE);
-            urls.push(BLACK_IMAGE);
-           
-            urls.reverse();
-
-            setPages(urls);
+            setPages(buildPageList(safeBookId, json));
         }
 
         load();
