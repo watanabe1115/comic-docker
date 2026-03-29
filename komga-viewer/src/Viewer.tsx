@@ -72,11 +72,15 @@ export default function Viewer() {
           flipRef.current?.pageFlip()?.turnToPage(originalPage)
         }}
         onHoverMenu={(hover) => setMenuHover(hover)}
-        onBack={() => history.back()}
+        onBack={() => goBackToBookPage(safeBookId)}
         onToggleFullscreen={toggleFullscreen}
       />
     </div>
   );
+}
+
+function goBackToBookPage(bookId: string) {
+  location.href = `/book/${bookId}`;
 }
 
 function toggleFullscreen() {
