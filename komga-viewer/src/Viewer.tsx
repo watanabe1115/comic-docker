@@ -72,9 +72,17 @@ export default function Viewer() {
           flipRef.current?.pageFlip()?.turnToPage(originalPage)
         }}
         onHoverMenu={(hover) => setMenuHover(hover)}
-        onBack={() => console.log("Back")}
-        onToggleFullscreen={() => console.log("ToggleFullscreen")}
+        onBack={() => history.back()}
+        onToggleFullscreen={toggleFullscreen}
       />
     </div>
   );
+}
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
 }
