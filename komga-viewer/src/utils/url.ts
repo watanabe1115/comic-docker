@@ -6,7 +6,6 @@
  * @returns bookId（見つからない場合は undefined）
  */
 export function getBookId(path: string): string | undefined  {
-  return "0PCQQZPQG99NP";
   const match = path.match(/^\/book\/([^/]+)\/read/);
   return match?.[1];
 }
