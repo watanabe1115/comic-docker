@@ -1,7 +1,7 @@
 services:
-  komga-n:
+  komga-a:
     image: gotson/komga:latest
-    container_name: komga-n
+    container_name: komga-a
     restart: unless-stopped
     volumes:
       - ./komga-a_mnt/config:/config
