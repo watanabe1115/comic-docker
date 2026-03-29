@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 
 import { getBookId } from "@/utils/url";
 import { buildPageList, convertToDisplayPage, convertToOriginalPage } from "@/utils/pages";
-import { fetchPages } from "@/api";
+import { fetchBook, fetchPages } from "@/api";
 import { PageFlipBook } from "@/components/PageFlipBook";
 import { ClickLayer } from "@/components/viewer/ClickLayer";
 import { OverlayMenu } from "@/components/viewer/OverlayMenu";
@@ -16,6 +16,7 @@ export default function Viewer() {
 
   const flipRef = useRef<any>(null);
 
+  const [title, setTitle] = useState("");
   const [pages, setPages] = useState<string[]>([]);
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuHover, setMenuHover] = useState(false);
@@ -25,8 +26,13 @@ export default function Viewer() {
 
   useEffect(() => {
     async function load() {
-      const json = await fetchPages(safeBookId);
-      setPages(buildPageList(safeBookId, json));
+      const [book, pageJson] = await Promise.all([
+        fetchBook(safeBookId),
+        fetchPages(safeBookId),
+      ]);
+
+      setTitle(book.metadata?.title ?? "");
+      setPages(buildPageList(safeBookId, pageJson));
     }
     load();
   }, [safeBookId]);
@@ -60,11 +66,14 @@ export default function Viewer() {
         visible={menuVisible}
         current={displayPage}
         total={total}
+        title={title}
         onChangePage={(page) => {
           const originalPage = convertToOriginalPage(page, total);
           flipRef.current?.pageFlip()?.turnToPage(originalPage)
         }}
         onHoverMenu={(hover) => setMenuHover(hover)}
+        onBack={() => console.log("Back")}
+        onToggleFullscreen={() => console.log("ToggleFullscreen")}
       />
     </div>
   );

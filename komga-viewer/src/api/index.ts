@@ -1,1 +1,1 @@
-export { fetchPages } from "@/api/komga";
+export { fetchBook, fetchPages } from "@/api/komga";
