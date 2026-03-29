@@ -45,7 +45,6 @@ export default function Viewer() {
 
     const total = pages.length - 2;
     const displayPage = convertToDisplayPage(currentPage, total);
-    console.log("currentPage 3", currentPage)
 
     return (
       <div style={{ position: "fixed", inset: 0 }}>
@@ -65,10 +64,7 @@ export default function Viewer() {
             const originalPage = convertToOriginalPage(page, total);
             flipRef.current?.pageFlip()?.turnToPage(originalPage)
           }}
-          onHoverMenu={(b) => {
-            setMenuHover(b);
-            console.log("onHoverMenu", b);
-          }}
+          onHoverMenu={(hover) => setMenuHover(hover)}
         />
       </div>
     );

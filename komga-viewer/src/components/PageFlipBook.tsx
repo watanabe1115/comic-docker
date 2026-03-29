@@ -13,9 +13,6 @@ export const PageFlipBook = forwardRef<any, Props>(function PageFlipBook(
   { pages, startPage, showPageCorners, onFlip },
   ref
 ) {
-
-  console.log("PageFlipBook.startPage", startPage);
-
   return (
     <div className={styles.container}>
       <HTMLFlipBook
