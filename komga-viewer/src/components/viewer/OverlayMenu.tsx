@@ -10,10 +10,8 @@ type Props = {
 };
 
 export function OverlayMenu({ visible, current, total, onChangePage }: Props) {
-  if (!visible) return null;
-
   return (
-    <div className={styles.menu}>
+    <div className={`${styles.bottomMenu} ${visible ? styles.visible : ""}`}>
       <div className={styles.row}>
         <PageSlider current={current} total={total} onChange={onChangePage} />
         <div className={styles.pageInfo}>{current} / {total}</div>

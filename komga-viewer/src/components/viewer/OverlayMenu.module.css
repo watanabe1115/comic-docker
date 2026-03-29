@@ -1,4 +1,4 @@
-.menu {
+.bottomMenu {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -6,13 +6,21 @@
   padding: 16px;
   background: rgba(0, 0, 0, 0.6);
   z-index: 20;
+
+  /* ▼ 下からスライドイン */
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.bottomMenu.visible {
+  transform: translateY(0);
 }
 
 /* 横並び */
 .row {
   display: flex;
   align-items: center;
-  gap: 12px; /* スライダーと数字の間隔 */
+  gap: 12px;
 }
 
 /* ページ数表示 */
@@ -20,5 +28,5 @@
   color: white;
   font-size: 14px;
   opacity: 0.9;
-  white-space: nowrap; /* 改行しない */
+  white-space: nowrap;
 }
