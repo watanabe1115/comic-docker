@@ -11,7 +11,7 @@ export function PageSlider({ current, total, onChange }: Props) {
     <input
       type="range"
       min={1}
-      max={total - 1}
+      max={total}
       value={current}
       onChange={(e) => {
         const value = Number(e.target.value);
