@@ -4,16 +4,22 @@ import styles from "@/components/PageFlipBook.module.css";
 
 type Props = {
   pages: string[];
+  startPage: number;
+  showPageCorners: boolean;
   onFlip?: (page: number) => void;
 };
 
 export const PageFlipBook = forwardRef<any, Props>(function PageFlipBook(
-  { pages, onFlip },
+  { pages, startPage, showPageCorners, onFlip },
   ref
 ) {
+
+  console.log("PageFlipBook.startPage", startPage);
+
   return (
     <div className={styles.container}>
       <HTMLFlipBook
+        key={showPageCorners ? "corners-on" : "corners-off"}
         ref={ref}
         width={850}
         height={1200}
@@ -27,8 +33,9 @@ export const PageFlipBook = forwardRef<any, Props>(function PageFlipBook(
         flippingTime={800}
         usePortrait={true}
         showCover={false}
+        showPageCorners={showPageCorners}
         mobileScrollSupport={true}
-        startPage={pages.length - 1}
+        startPage={startPage}
         className={styles.flipbook}
         onFlip={(e) => onFlip?.(e.data)}
       >

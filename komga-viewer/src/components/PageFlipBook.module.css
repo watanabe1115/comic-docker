@@ -20,3 +20,7 @@
   height: 100%;
   object-fit: cover;
 }
+
+.page-corner {
+  display: none !important;
+}

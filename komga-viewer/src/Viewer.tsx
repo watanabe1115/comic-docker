@@ -18,9 +18,10 @@ export default function Viewer() {
 
     const [pages, setPages] = useState<string[]>([]);
     const [menuVisible, setMenuVisible] = useState(false);
+    const [menuHover, setMenuHover] = useState(false);
 
     // スライダーと同期するための現在ページ
-    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(pages.length - 1);
 
     useEffect(() => {
         async function load() {
@@ -34,6 +35,8 @@ export default function Viewer() {
     useEffect(() => {
       if (!flipRef.current) return;
 
+      setCurrentPage(pages.length - 1);
+
       const inst = flipRef.current.pageFlip?.();
       if (!inst) return;
 
@@ -42,12 +45,15 @@ export default function Viewer() {
 
     const total = pages.length - 2;
     const displayPage = convertToDisplayPage(currentPage, total);
+    console.log("currentPage 3", currentPage)
 
     return (
       <div style={{ position: "fixed", inset: 0 }}>
         <PageFlipBook
           ref={flipRef}
           pages={pages}
+          startPage={currentPage}
+          showPageCorners={!menuHover}
           onFlip={(page) => setCurrentPage(page)}
         />
         <ClickLayer onCenterClick={() => setMenuVisible(v => !v)} />
@@ -58,6 +64,10 @@ export default function Viewer() {
           onChangePage={(page) => {
             const originalPage = convertToOriginalPage(page, total);
             flipRef.current?.pageFlip()?.turnToPage(originalPage)
+          }}
+          onHoverMenu={(b) => {
+            setMenuHover(b);
+            console.log("onHoverMenu", b);
           }}
         />
       </div>
